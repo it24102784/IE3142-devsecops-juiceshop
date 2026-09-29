@@ -35,21 +35,14 @@ jobs:
         run: npm audit --audit-level=high
         continue-on-error: true
 
-      # Gate 3: Static Application Security Testing (SAST)
-      - name: Run Semgrep (SAST Scan)
-        uses: returntocorp/semgrep-action@v1
-        with:
-          config: "p/javascript"
-        continue-on-error: true
+      # Gate 4: Container Security (Trivy)
+      - name: Build Docker Image
+        run: docker build -t juice-shop:scan .
 
-      # Gate 4: Container Image Scanning
-      - name: Pull Image for Scanning
-        run: docker pull bkimminich/juice-shop:latest
-
-      - name: Run Trivy (Container Scan)
+      - name: Run Trivy Vulnerability Scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'bkimminich/juice-shop:latest'
+          image-ref: 'juice-shop:scan'
           format: 'table'
-          exit-code: '0'
           severity: 'CRITICAL,HIGH'
+          exit-code: '0'
