@@ -42,14 +42,11 @@ jobs:
           config: "p/javascript"
         continue-on-error: true
 
-      # Gate 4: Container Security (Trivy)
-      - name: Build Docker Image
-        run: docker build -t juice-shop:scan .
-
+# Gate 4: Container Security (Trivy)
       - name: Run Trivy Vulnerability Scanner
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: 'juice-shop:scan'
+          image-ref: 'bkimminich/juice-shop:latest'
           format: 'table'
           severity: 'CRITICAL,HIGH'
           exit-code: '0'
