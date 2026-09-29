@@ -18,7 +18,7 @@ jobs:
       - name: Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '20'
 
       - name: Install Application Dependencies
         run: npm install --legacy-peer-deps --ignore-scripts
@@ -33,6 +33,13 @@ jobs:
       # Gate 2: Software Composition Analysis (SCA)
       - name: Run npm audit (Dependency Scan)
         run: npm audit --audit-level=high
+        continue-on-error: true
+
+      # Gate 3: Static Application Security Testing (SAST)
+      - name: Run Semgrep SAST
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: "p/javascript"
         continue-on-error: true
 
       # Gate 4: Container Security (Trivy)
